@@ -1,4 +1,4 @@
 imagePresets
 ============
 
-Presets for Kohana Image extension
+Presets for Kohana Image extension (Yii)
