@@ -54,19 +54,7 @@ class CImagePresetsComponent extends CApplicationComponent {
      * @var string 
      */
     public $image_component = 'image';
-
-    
-    /**
-     * Main function.
-     * 
-     * @param string $full_path Full path to the original file. Полный путь к исходному файлу.
-     * @param string $cache_folder Full path to the folder where processed file will be saved. Папка, куда будет сохранен преобразованный файл.
-     * @param string $preset_name Name of preset.
-     * @param boolean $force If false will not replace processed file. Заменять ли файл, если он уже существует.
-     * @return void
-     */
-     
-     
+   
     private function crop_resize($image, $params) {
     	$w=$params[0];
 		$h=$params[1];
@@ -79,7 +67,17 @@ class CImagePresetsComponent extends CApplicationComponent {
 		}
     	return $image;
     }
-     
+    
+    
+    /**
+     * Main function.
+     * 
+     * @param string $full_path Full path to the original file. Полный путь к исходному файлу.
+     * @param string $cache_folder Full path to the folder where processed file will be saved. Папка, куда будет сохранен преобразованный файл.
+     * @param string $preset_name Name of preset.
+     * @param boolean $force If false will not replace processed file. Заменять ли файл, если он уже существует.
+     * @return void
+     */     
     public function image($full_path, $cache_folder, $preset_name, $force = false) {
         $full_path_info = pathinfo($full_path);
         $fpath = $full_path_info['basename'];
