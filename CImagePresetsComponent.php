@@ -7,12 +7,12 @@
  */
 class CImagePresetsComponent extends CApplicationComponent {
 
-	/**
-	 *	Enable profiling 
-	 *
-	 * @var boolean
-	 */
-	public $profile = false;
+    /**
+     *	Enable profiling 
+     *
+     * @var boolean
+     */
+    public $profile = false;
 
     /**
      * Path to files folder. Necessary for using "img" function.
