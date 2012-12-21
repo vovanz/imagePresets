@@ -7,7 +7,7 @@
  */
 class CImagePresetsComponent extends CApplicationComponent {
 
-    /**
+	/**
 	 *	Enable profiling 
 	 *
 	 * @var boolean
