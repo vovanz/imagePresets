@@ -8,6 +8,13 @@
 class CImagePresetsComponent extends CApplicationComponent {
 
     /**
+	 *	Enable profiling 
+	 *
+	 * @var boolean
+	 */
+	public $profile = false;
+
+    /**
      * Path to files folder. Necessary for using "img" function.
      * 
      * @var string
@@ -58,16 +65,37 @@ class CImagePresetsComponent extends CApplicationComponent {
      * @param boolean $force If false will not replace processed file. Заменять ли файл, если он уже существует.
      * @return void
      */
+     
+     
+    private function crop_resize($image, $params) {
+    	$w=$params[0];
+		$h=$params[1];
+		if($w/$h > $image->width/$image->height) {
+			$image->resize($w, NULL);
+			$image->crop($w, $h);			
+		} else {
+			$image->resize(NULL, $h);
+			$image->crop($w, $h);	
+		}
+    	return $image;
+    }
+     
     public function image($full_path, $cache_folder, $preset_name, $force = false) {
         $full_path_info = pathinfo($full_path);
         $fpath = $full_path_info['basename'];
 
         $image_component = $this->image_component;
-
+		
         $image = Yii::app()->$image_component->load($full_path);
         if (!file_exists($cache_folder . $fpath) || $force) {
             foreach ($this->presets[$preset_name] as $action => $params) {
+            	if($this->profile) {
+            		Yii::beginProfile('ImagePresets: '.$action.'ing'.' image '.$fpath);
+            	}
                 switch ($action) {
+					case 'crop_resize':
+						$image=$this->crop_resize($image, $params);
+						break;
                     case 'crop':
                         $image->crop($params[0], $params[1], $params[2], $params[3]);
                         break;
@@ -78,6 +106,9 @@ class CImagePresetsComponent extends CApplicationComponent {
                         $image->$action($params[0]);
                         break;
                 }
+				if($this->profile) {
+            		Yii::endProfile('ImagePresets: '.$action.'ing'.' image '.$fpath);
+            	}
             }
             $image->save($cache_folder . DIRECTORY_SEPARATOR . $fpath);
         }
@@ -97,10 +128,12 @@ class CImagePresetsComponent extends CApplicationComponent {
      */
     
     public function img($fpath, $preset_name, $files_path = false) {
-
+    	if($this->profile) {
+    		Yii::beginProfile('ImagePresets: '.'working on image '.$fpath.' for '.$preset_name);
+    	}
         if (!$files_path)
             $files_path = $this->files_path;
-
+		
         if (!file_exists(Yii::app()->basePath . DIRECTORY_SEPARATOR . '..' . $files_path . 'images' . DIRECTORY_SEPARATOR . $preset_name . DIRECTORY_SEPARATOR . $fpath)) {
             if (!file_exists(Yii::app()->basePath . DIRECTORY_SEPARATOR . '..' . $files_path . 'images'))
                 mkdir(Yii::app()->basePath . DIRECTORY_SEPARATOR . '..' . $files_path . 'images', 0777, true);
@@ -112,7 +145,9 @@ class CImagePresetsComponent extends CApplicationComponent {
 
             $this->image($full_path, $cache_folder, $preset_name);
         }
-
+    	if($this->profile) {
+    		Yii::endProfile('ImagePresets: '.'working on image '.$fpath.' for '.$preset_name);
+    	}
         return $files_path . 'images/' . $preset_name . '/' . $fpath;
     }
 
