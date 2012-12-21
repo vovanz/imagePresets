@@ -7,12 +7,12 @@
  */
 class CImagePresetsComponent extends CApplicationComponent {
 
-    /**
-     *	Enable profiling 
-     *
-     * @var boolean
-     */
-    public $profile = false;
+	/**
+	 *	Enable profiling 
+	 *
+	 * @var boolean
+	 */
+	public $profile = false;
 
     /**
      * Path to files folder. Necessary for using "img" function.
@@ -89,13 +89,10 @@ class CImagePresetsComponent extends CApplicationComponent {
         $image = Yii::app()->$image_component->load($full_path);
         if (!file_exists($cache_folder . $fpath) || $force) {
             foreach ($this->presets[$preset_name] as $action => $params) {
-            	if($this->profile) {
-            		Yii::beginProfile('ImagePresets: '.$action.'ing'.' image '.$fpath);
-            	}
                 switch ($action) {
-					case 'crop_resize':
-						$image=$this->crop_resize($image, $params);
-						break;
+                    case 'crop_resize':
+                    	$image=$this->crop_resize($image, $params);
+                    	break;
                     case 'crop':
                         $image->crop($params[0], $params[1], $params[2], $params[3]);
                         break;
@@ -106,9 +103,6 @@ class CImagePresetsComponent extends CApplicationComponent {
                         $image->$action($params[0]);
                         break;
                 }
-				if($this->profile) {
-            		Yii::endProfile('ImagePresets: '.$action.'ing'.' image '.$fpath);
-            	}
             }
             $image->save($cache_folder . DIRECTORY_SEPARATOR . $fpath);
         }
